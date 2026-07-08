@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+#DEBHELPER#
+
+# Drop the private dir from the loader cache so fprintd falls back to the
+# stock libfprint immediately.
+if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
+    ldconfig
+    systemctl try-restart fprintd.service 2>/dev/null || true
+fi

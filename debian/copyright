@@ -1,0 +1,29 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: libfprint
+Source: https://gitlab.freedesktop.org/libfprint/libfprint/-/tree/feature/sdcp-v2
+Comment: Repackages upstream freedesktop.org libfprint, branch feature/sdcp-v2
+ (merge request 547, which adds the Microsoft SDCP match-on-chip protocol),
+ at commit 2d7c5277, with a three-patch series carried under debian/patches/:
+ EgisTec ET171 (1c7a:05aa) device support, an SDCP core fix, and two egismoc
+ robustness fixes. All three patches are our own work (see their From: headers);
+ the ET171 support was informed by EvernightFedora's earlier ET171 work against
+ the TenSeventy7 libfprint fork, re-authored here for the upstream sdcp-v2 base.
+ The authoritative per-file copyright and authorship remain in the upstream
+ source headers within the .orig tarball.
+
+Files: *
+Copyright: 2007-2026 the libfprint authors (see individual source file headers)
+License: LGPL-2.1+
+
+Files: debian/*
+Copyright: 2026 Philip Walsh <packages@drphilth.com>
+License: LGPL-2.1+
+
+License: LGPL-2.1+
+ This library is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation; either version 2.1 of the License, or (at
+ your option) any later version.
+ .
+ On Debian systems, the complete text of the GNU Lesser General Public
+ License version 2.1 can be found in "/usr/share/common-licenses/LGPL-2.1".

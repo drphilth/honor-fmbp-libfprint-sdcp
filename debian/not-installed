@@ -1,0 +1,7 @@
+# Intentionally not shipped: this stopgap deb provides ONLY the private-dir
+# runtime library. Dev files / metainfo belong to the real libfprint packages.
+usr/include
+usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig
+usr/lib/${DEB_HOST_MULTIARCH}/libfprint-2.so
+usr/lib/${DEB_HOST_MULTIARCH}/libfprint-2.so.2
+usr/share/metainfo

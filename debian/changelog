@@ -1,0 +1,54 @@
+honor-fmbp-libfprint-sdcp (1.94.10+sdcpv2-honor7) resolute; urgency=medium
+
+  * debian/patches-local/0100-skip-unshipped-tests-examples.patch: drop
+    subdir('tests')/subdir('examples') from meson.build. This package ships only
+    the private-dir egismoc runtime library, but upstream builds the test and
+    example executables unconditionally (no meson option gates them), needlessly
+    compiling and LTO-linking binaries we never install. The honor6 amd64 build
+    failed on Launchpad with no build log — the signature of the build VM being
+    killed during those unshipped executable links; scoping the build to just the
+    library removes them. The shipped library's build flags are unchanged
+    (functionally identical to the hardware-verified honor6). build.sh now folds
+    debian/patches-local/*.patch into the series after the upstream (MR 547) set.
+
+ -- Philip Walsh <packages@drphilth.com>  Tue, 07 Jul 2026 19:45:00 +0100
+
+honor-fmbp-libfprint-sdcp (1.94.10+sdcpv2-honor6) resolute; urgency=medium
+
+  * Package as 3.0 (quilt): pristine upstream libfprint 1.94.10 (feature/
+    sdcp-v2 @ 2d7c5277) as the .orig tarball, with the three-patch series
+    carried under debian/patches/. Replaces the earlier 3.0 (native) layout
+    that assembled the tree at build time via git clone — unusable for a
+    source-only PPA upload (Launchpad builders have no network). Version gains
+    a Debian revision (quilt requires one): +honor6 becomes -honor6.
+  * Drop the pre-Connect list command inherited from the fork lineage:
+    negative-tested as unnecessary on this branch, including from a cold
+    power-on with no prior host contact. SKIP_CONTROL_INIT retained (proven
+    required: open stalls on the first vendor control transfer without it).
+    Series commit 1 simplifies accordingly; no functional change otherwise.
+
+ -- Philip Walsh <packages@drphilth.com>  Fri, 03 Jul 2026 13:30:00 +0100
+
+honor-fmbp-libfprint-sdcp (1.94.10+sdcpv2-honor5) resolute; urgency=medium
+
+  * Rebase onto upstream libfprint feature/sdcp-v2 (MR 547) @ 2d7c5277,
+    replacing the TenSeventy7 fork base. Carries our 3-patch series
+    (fixes/fingerprint/sdcp-v2-series/): ET171 1c7a:05aa device support,
+    an SDCP-core fix (identified print not marked device-stored), and two
+    egismoc robustness fixes (short-interrupt-packet guard, SW-9000-only
+    duplicate check).
+  * IMPORTANT: enrollments made with +honor4 or earlier do not carry over
+    (new SDCP host print format); fprintd garbage-collects them on first
+    use — re-enroll after upgrading. See README.Debian.
+  * Hardware-verified 2026-07-03 (FMB-P): enroll, verify match/no-match,
+    lock-screen PAM unlock, suspend/resume reconnect.
+
+ -- Philip Walsh <packages@drphilth.com>  Fri, 03 Jul 2026 10:00:00 +0100
+
+honor-fmbp-libfprint-sdcp (1.94.9+sdcp-honor4) resolute; urgency=medium
+
+  * Formal Debian packaging (replaces the hand-assembled +honor3 deb):
+    dh/meson build, dependencies computed via shlibs, same private-directory
+    + ld.so.conf.d override layout.
+
+ -- Philip Walsh <packages@drphilth.com>  Thu, 02 Jul 2026 22:30:00 +0100

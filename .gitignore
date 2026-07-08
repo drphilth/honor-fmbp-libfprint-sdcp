@@ -1,0 +1,9 @@
+# build.sh workspace + collected source-package artifacts
+build/
+*.dsc
+*.changes
+*.buildinfo
+*.tar.xz
+*.deb
+*.ddeb
+*.upload

@@ -1,0 +1,30 @@
+Source: honor-fmbp-libfprint-sdcp
+Section: misc
+Priority: optional
+Maintainer: Philip Walsh <packages@drphilth.com>
+Build-Depends: debhelper-compat (= 13),
+               meson (>= 0.61),
+               pkgconf,
+               libglib2.0-dev,
+               libgusb-dev,
+               libssl-dev
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Homepage: https://github.com/TenSeventy7/libfprint-egismoc-sdcp
+
+Package: honor-fmbp-libfprint-sdcp
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Enhances: fprintd
+Description: SDCP libfprint override for the HONOR MagicBook Pro 14 fingerprint reader
+ EgisTec ET171 (1c7a:05aa) support: libfprint 1.94.9 from the
+ TenSeventy7/libfprint-egismoc-sdcp fork (SDCP match-on-chip protocol) with
+ EvernightFedora's PR #1 device support — 05aa id, SDCP-init command before
+ connect, skip of the unsupported USB control-init, 15 enroll stages — plus
+ a meson fix so an egismoc-only build links openssl.
+ .
+ STOPGAP package: the library installs to a private directory
+ (/usr/lib/x86_64-linux-gnu/honor-fmbp/) and is preferred over the stock
+ (SDCP-less) libfprint-2.so.2 purely via ld.so.conf.d ordering — no distro
+ file is diverted or held. Remove this package to fall back to stock
+ libfprint. Superseded once SDCP support lands in upstream libfprint.

@@ -1,0 +1,2 @@
+usr/lib/x86_64-linux-gnu/libfprint-2.so.2.0.0 usr/lib/x86_64-linux-gnu/honor-fmbp/
+debian/000-honor-fmbp-fprint.conf etc/ld.so.conf.d/

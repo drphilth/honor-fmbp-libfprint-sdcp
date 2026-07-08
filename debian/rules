@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --buildsystem=meson
+
+# egismoc only; no udev bits (the stock libfprint-2-2 deb already ships
+# rules/hwdb and stays installed — this package must not collide with it).
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-Ddrivers=egismoc \
+		-Dgtk-examples=false \
+		-Dintrospection=false \
+		-Ddoc=false \
+		-Dudev_rules=disabled \
+		-Dudev_hwdb=disabled \
+		-Dinstalled-tests=false
+
+# Stage the full meson install in debian/tmp and let the .install file
+# cherry-pick ONLY the private-dir library + ld.so.conf.d entry — the deb must
+# never ship files at libfprint-2-2's public paths (headers, pkgconfig, the
+# public .so). Single-binary packages otherwise install straight into
+# debian/<pkg>/, bypassing dh_install.
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/tmp
+
+# Upstream tests need umockdev fixtures for devices we don't build; skip.
+override_dh_auto_test:

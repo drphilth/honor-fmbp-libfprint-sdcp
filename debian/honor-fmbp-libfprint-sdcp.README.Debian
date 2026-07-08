@@ -1,0 +1,77 @@
+honor-fmbp-libfprint-sdcp — usage notes
+=======================================
+
+Getting started
+---------------
+1. Enroll a finger: GNOME Settings → Users → Fingerprint Login (or
+   `fprintd-enroll`). Enrollment takes 15 touches on this sensor. The power
+   button IS the fingerprint sensor.
+2. Enable fingerprint auth: `sudo pam-auth-update --enable fprintd`.
+3. A press of the power button at power-on is cached and presented to the
+   login screen — you usually won't need a second touch at GDM.
+
+*** IMPORTANT: dual-booting Windows DESTROYS your Linux enrollments ***
+-----------------------------------------------------------------------
+This is a match-on-chip sensor (Microsoft SDCP): fingerprints are stored on
+the sensor itself. The Windows biometric stack, at every boot (merely
+reaching the Windows login screen — no login, no finger scan needed),
+reconciles the sensor's on-chip storage against its own credential database
+and DELETES any template it doesn't recognise — including all Linux
+enrollments. Verified by experiment on this hardware (2026-07-02):
+
+  - Linux → reboot → Linux:                     enrollment survives
+  - Linux → Windows (login or not) → Linux:     Linux enrollments WIPED
+  - The wipe is one-directional: Linux never touches Windows Hello prints.
+  - An empty Windows Hello (no fingerprints enrolled in Windows) does NOT
+    prevent the wipe.
+
+THE FIX — if you dual-boot, disable the fingerprint device in Windows:
+
+    Windows: Device Manager → Biometric devices →
+             right-click the Egis/fingerprint device → Disable device
+
+With the device disabled, the Windows biometric stack never claims the
+sensor and Linux enrollments survive Windows boots (verified end-to-end).
+Trade-off: Windows Hello fingerprint login stops working — with this sensor
+you get fingerprint login in EITHER Linux OR Windows, not both. If you keep
+it enabled in Windows instead, you must re-enroll in Linux after every
+Windows boot.
+
+If fingerprint login suddenly stops matching after you've been in Windows,
+this is why: check `fprintd-list $USER`, then re-enroll (or apply the fix).
+
+Optional: more retry tolerance at the lock screen
+-------------------------------------------------
+The GDM login greeter already allows 3 scan attempts. The lock screen and
+sudo default to 1. To allow retries there, edit /etc/pam.d/common-auth and
+append options to the pam_fprintd.so line, e.g.:
+
+    auth [success=2 default=ignore] pam_fprintd.so timeout=10 max-tries=3
+
+(pam-auth-update preserves local option edits on that line. Keep the line
+free of inline comments.)
+
+Upgrading from 1.94.9+sdcp+honor4 or earlier
+--------------------------------------------
+Fingerprints enrolled with older versions of this package (which were built
+from the TenSeventy7 fork) do NOT carry over: the upstream SDCP branch this
+package now builds from stores prints in a new host-side format. On first
+use after the upgrade, fprintd notices the old prints are stale and removes
+them automatically — your fingerprint login silently stops working until you
+re-enroll (one time only). Re-enroll via GNOME Settings -> Users ->
+Fingerprint Login, or `fprintd-enroll`.
+
+About this package
+------------------
+Stopgap build of upstream libfprint's SDCP branch (MR 547, feature/sdcp-v2,
+pinned commit) plus our patch series adding ET171 (1c7a:05aa) device support
+and related fixes — the same series proposed upstream. The library lives in
+/usr/lib/x86_64-linux-gnu/honor-fmbp/ and wins over the stock libfprint via
+ld.so.conf.d ordering; remove this package to fall back to stock. It will be
+retired once the SDCP branch plus this device id land in a released
+libfprint.
+
+Note: this package only supports the EgisTec ET171 (USB 1c7a:05aa) sensor
+variant. Some HONOR MagicBook Pro 14 units ship FPC sensors (10a5:9924 /
+10a5:9B24) instead — check `lsusb` — those need a different driver patch and
+are not covered here.

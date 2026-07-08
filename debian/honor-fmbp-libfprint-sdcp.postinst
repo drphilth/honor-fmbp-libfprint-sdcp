@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+#DEBHELPER#
+
+# The lib lives in a private ld.so.conf.d-registered dir, so the standard
+# ldconfig trigger doesn't cover it; refresh the cache and pick it up now.
+if [ "$1" = "configure" ]; then
+    ldconfig
+    systemctl try-restart fprintd.service 2>/dev/null || true
+fi
