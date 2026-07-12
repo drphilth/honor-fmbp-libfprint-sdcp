@@ -1,0 +1,7 @@
+# makepkg artifacts
+pkg/
+src/
+libfprint/
+*.pkg.tar.zst
+*.pkg.tar.zst.sig
+*.log

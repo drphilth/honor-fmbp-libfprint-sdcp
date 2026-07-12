@@ -18,6 +18,8 @@ the FMB-P: enroll, verify, PAM lock-screen unlock, suspend/resume reconnect.
 
 ## Installing
 
+### Ubuntu / Debian
+
 Easiest via the PPA (pulled in automatically by the
 [`honor-magicbook-pro-14`](https://github.com/drphilth/honor-magicbook-pro-14-ubuntu)
 metapackage):
@@ -40,6 +42,37 @@ Manager if you dual-boot). It also covers enrollment, PAM setup and retry tuning
 Only the ET171 (`1c7a:05aa`) variant is covered. Some FMB-P units ship FPC sensors
 (`10a5:9924` / `10a5:9b24`, check `lsusb`) — those need a different driver and are not
 supported here.
+
+### Arch / CachyOS
+
+Packaged in [`arch/`](arch/). Same fork, same patches — only the packaging layer differs from
+[`debian/`](debian/).
+
+```sh
+cd arch && makepkg -si
+fprintd-enroll && fprintd-verify        # the ET171 wants ~15 touches
+```
+
+It is also pulled in as an optional dependency of the
+[`honor-magicbook-pro-14`](https://github.com/drphilth/honor-magicbook-pro-14-cachy) metapackage.
+
+The Arch build pins **upstream libfprint's git commit directly**, so nothing is vendored:
+`git+https://gitlab.freedesktop.org/libfprint/libfprint.git#commit=2d7c527…`.
+
+Two things worth knowing if you touch this PKGBUILD:
+
+- It needs **`glib2-devel`** at build time. Arch split `glib-mkenums` out of `glib2`, and without
+  it meson dies with *"tool variable 'glib_mkenums' contains erroneous value"*.
+- The `package()` step must match the **real ELF only** — meson also emits
+  `libfprint-2.so.2.0.0.symbols` next to it. Globbing that by mistake ships a **dangling symlink
+  with no library**, `ldconfig` silently falls back to the stock (SDCP-less) libfprint, and
+  fingerprint just stops working with nothing obviously broken.
+
+**KDE:** lock-screen unlock works with no PAM edits — Plasma ships a `kde-fingerprint` stack. The
+*login* screen does not support fingerprint; that is an upstream gap
+([plasma-login-manager#1](https://invent.kde.org/plasma/plasma-login-manager/-/issues/1)), not a
+misconfiguration. The PAM workaround for it breaks KWallet — don't.
+
 
 ## Building
 
