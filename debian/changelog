@@ -1,3 +1,25 @@
+honor-fmbp-libfprint-sdcp (1.94.10+sdcpv2-honor8) resolute; urgency=medium
+
+  * patches/0004-sdcp-fix-intermittent-open-hang-on-short-host-privat.patch:
+    fix the intermittent fprintd hang from issue #1. About 1 generated SDCP
+    host key in 256 has a leading zero byte; fpi_sdcp_get_private_key()
+    rejected it, and fpi_sdcp_device_connect_complete() then returned on
+    g_return_if_fail (priv->host_private_key) without completing the open,
+    leaving the device claimed until fprintd was restarted. Keys are now
+    left-padded, and connect errors always complete the open.
+  * patches/0005-egismoc-fail-the-task-SSM-on-identify-and-finger-wai.patch:
+    a verify finger-wait timeout left the identify task SSM dangling, so the
+    next close completed twice (bogus "Operation was cancelled" from
+    ReleaseDevice plus a G_IS_TASK critical). Errors now fail the task SSM.
+  * patches/0006-egismoc-bounds-check-the-SDCP-ConnectResponse-agains.patch:
+    bounds-check the ConnectResponse against the device-supplied cert_m
+    length (out-of-bounds read on a malformed response).
+  * Hardware-verified on the FMB-P: a forced short host key reproduces the
+    hang with the previous build and opens and matches with this one; the
+    verify timeout no longer produces the critical.
+
+ -- Philip Walsh <packages@drphilth.com>  Wed, 07 Oct 2026 16:00:00 +0100
+
 honor-fmbp-libfprint-sdcp (1.94.10+sdcpv2-honor7) resolute; urgency=medium
 
   * debian/patches-local/0100-skip-unshipped-tests-examples.patch: drop

@@ -6,11 +6,16 @@ protocol). The power button *is* the sensor.
 
 This is a **stopgap Debian packaging** of upstream libfprint's SDCP branch
 ([merge request 547](https://gitlab.freedesktop.org/libfprint/libfprint/-/merge_requests/547),
-`feature/sdcp-v2`, pinned commit) plus a three-patch series ([`patches/`](patches/)):
+`feature/sdcp-v2`, pinned commit) plus a six-patch series ([`patches/`](patches/)):
 
 1. `egismoc`: EgisTec ET171 (`1c7a:05aa`) device support
 2. SDCP core: mark the identified print as device-stored (every match otherwise fails)
 3. `egismoc`: robustness fixes (short-interrupt-packet guard, SW-9000-only duplicate check)
+4. SDCP core: fix an intermittent open hang (~1 in 256 opens) on host keys with a leading
+   zero byte ([#1](https://github.com/drphilth/honor-fmbp-libfprint-sdcp/issues/1))
+5. `egismoc`: finish the identify task on a finger-wait timeout (fixes a double close
+   completion and `G_IS_TASK` critical)
+6. `egismoc`: bounds-check the SDCP ConnectResponse against the device-supplied cert length
 
 The series is our own work, proposed for upstream inclusion; this package retires once
 the SDCP branch plus this device id land in a released libfprint. Hardware-verified on

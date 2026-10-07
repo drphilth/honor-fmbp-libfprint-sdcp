@@ -3,9 +3,9 @@ Upstream-Name: libfprint
 Source: https://gitlab.freedesktop.org/libfprint/libfprint/-/tree/feature/sdcp-v2
 Comment: Repackages upstream freedesktop.org libfprint, branch feature/sdcp-v2
  (merge request 547, which adds the Microsoft SDCP match-on-chip protocol),
- at commit 2d7c5277, with a three-patch series carried under debian/patches/:
- EgisTec ET171 (1c7a:05aa) device support, an SDCP core fix, and two egismoc
- robustness fixes. All three patches are our own work (see their From: headers);
+ at commit 2d7c5277, with a six-patch series carried under debian/patches/:
+ EgisTec ET171 (1c7a:05aa) device support, two SDCP core fixes, and egismoc
+ robustness fixes. All six patches are our own work (see their From: headers);
  the ET171 support was informed by EvernightFedora's earlier ET171 work against
  the TenSeventy7 libfprint fork, re-authored here for the upstream sdcp-v2 base.
  The authoritative per-file copyright and authorship remain in the upstream

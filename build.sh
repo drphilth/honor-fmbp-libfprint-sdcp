@@ -3,7 +3,7 @@
 # for a Launchpad PPA upload, and optionally test-build the binary locally.
 #
 # The package repackages upstream libfprint feature/sdcp-v2 @ a pinned commit
-# with our three-patch series (patches/) carried as quilt patches under
+# with our patch series (patches/) carried as quilt patches under
 # debian/patches/. Launchpad builders have NO network and
 # never run this script — they build the uploaded .dsc directly. This script's
 # job is to PRODUCE that source package: a pristine upstream .orig tarball plus
