@@ -1,7 +1,7 @@
 pkgbase = honor-fmbp-libfprint-sdcp
-	pkgdesc = SDCP-capable libfprint for the HONOR FMB-P EgisTec ET171 (1c7a:05aa), in a private libdir
+	pkgdesc = SDCP-capable libfprint for the HONOR FMB-P fingerprint readers (EgisTec ET171 1c7a:05aa, FPC 10a5:9924), in a private libdir
 	pkgver = 1.94.10+sdcpv2
-	pkgrel = 2
+	pkgrel = 3
 	url = https://github.com/drphilth/honor-fmbp-libfprint-sdcp
 	install = honor-fmbp-libfprint-sdcp.install
 	arch = x86_64
@@ -22,6 +22,8 @@ pkgbase = honor-fmbp-libfprint-sdcp
 	source = 0004-sdcp-fix-intermittent-open-hang-on-short-host-privat.patch
 	source = 0005-egismoc-fail-the-task-SSM-on-identify-and-finger-wai.patch
 	source = 0006-egismoc-bounds-check-the-SDCP-ConnectResponse-agains.patch
+	source = 0007-fpcmoc-Add-support-for-0x10A5-0x9B24.patch
+	source = 0008-fpcmoc-Add-support-for-0x10A5-0x9924.patch
 	source = 0100-skip-unshipped-tests-examples.patch
 	sha256sums = SKIP
 	sha256sums = 725765d34caba5d18fb3eb2c7c4491b5480de85affc82fa9a34acc6102e1761e
@@ -30,6 +32,8 @@ pkgbase = honor-fmbp-libfprint-sdcp
 	sha256sums = e5b2f97beffde25068a40e35753ee1e3e47706ed2fcd37199493878cfd5178e5
 	sha256sums = 8e835a0cb65334db7f6812ee7adae4c427badeeb4a76bf244581a11456ed08d1
 	sha256sums = ba5ad1eebddd197c9bc17b5ae6565518788fa0190aa7824bd2b952a101723942
+	sha256sums = 533d850c5fed99d531ee688ab354f5ea1d7276265c9f9bb60d6e0eb0268a2084
+	sha256sums = 78d2961c50d30d669b5fecfacb4dd2ca5ff1df5f5a993e66efc9efddd2f4be87
 	sha256sums = 81fe90c7dd03c78e8b2cee1ebf87c6326f573d60bb2df20af0cc32c14c9f3174
 
 pkgname = honor-fmbp-libfprint-sdcp

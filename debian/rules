@@ -3,11 +3,14 @@
 %:
 	dh $@ --buildsystem=meson
 
-# egismoc only; no udev bits (the stock libfprint-2-2 deb already ships
-# rules/hwdb and stays installed — this package must not collide with it).
+# egismoc (EgisTec ET171) + fpcmoc (FPC 10a5:9924 / 9b24, the other FMB-P sensor);
+# no udev bits (the stock libfprint-2-2 deb already ships rules/hwdb and stays
+# installed — this package must not collide with it). Both drivers are needed:
+# this library wins over the stock one via ld.so.conf.d, so a driver missing
+# here is missing for fprintd altogether.
 override_dh_auto_configure:
 	dh_auto_configure -- \
-		-Ddrivers=egismoc \
+		-Ddrivers=egismoc,fpcmoc \
 		-Dgtk-examples=false \
 		-Dintrospection=false \
 		-Ddoc=false \

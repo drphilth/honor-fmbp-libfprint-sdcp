@@ -1,0 +1,68 @@
+From 86751238c63d0c9f678b3c68244158b58894267a Mon Sep 17 00:00:00 2001
+From: Lukas Thomann <lukas.thomann@outlook.com>
+Date: Sun, 27 Sep 2026 15:35:29 +0200
+Subject: [PATCH 8/8] fpcmoc: Add support for 0x10A5:0x9924
+
+Add the FPC sensor found in the HONOR MagicBook Pro 14 (2025, FMB-P),
+which reports itself as "FPC L:2407".
+
+Skip the USB reset on open for this device: its firmware restarts on
+reset and re-enumerates as a new USB device, which leaves the driver
+with a stale handle and makes enrollment fail.
+
+The device ID comes from !611 by lichenggang, where the reset problem
+was also reported.
+
+(cherry picked from commit bf6e053a8c69ee64c39dff192c35c91f2d9ce251)
+---
+ data/autosuspend.hwdb          | 1 +
+ libfprint/drivers/fpcmoc/fpc.c | 7 ++++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/data/autosuspend.hwdb b/data/autosuspend.hwdb
+index 78cd1f62..23b75eb6 100644
+--- a/data/autosuspend.hwdb
++++ b/data/autosuspend.hwdb
+@@ -201,6 +201,7 @@ usb:v10A5pD205*
+ usb:v10A5p9524*
+ usb:v10A5p9544*
+ usb:v10A5pC844*
++usb:v10A5p9924*
+ usb:v10A5p9B24*
+  ID_AUTOSUSPEND=1
+  ID_PERSIST=0
+diff --git a/libfprint/drivers/fpcmoc/fpc.c b/libfprint/drivers/fpcmoc/fpc.c
+index 466a8096..4cc53b3f 100644
+--- a/libfprint/drivers/fpcmoc/fpc.c
++++ b/libfprint/drivers/fpcmoc/fpc.c
+@@ -72,6 +72,7 @@ static const FpIdEntry id_table[] = {
+   { .vid = 0x10A5,  .pid = 0x9524,  },
+   { .vid = 0x10A5,  .pid = 0x9544,  },
+   { .vid = 0x10A5,  .pid = 0xC844,  },
++  { .vid = 0x10A5,  .pid = 0x9924,  },
+   { .vid = 0x10A5,  .pid = 0x9B24,  },
+   /* terminating entry */
+   { .vid = 0,  .pid = 0,  .driver_data = 0 },
+@@ -1648,6 +1649,7 @@ fpc_dev_probe (FpDevice *device)
+     case 0x9524:
+     case 0x9544:
+     case 0xC844:
++    case 0x9924:
+       self->max_enroll_stage = MAX_ENROLL_SAMPLES;
+       break;
+ 
+@@ -1670,7 +1672,10 @@ fpc_dev_open (FpDevice *device)
+   GError *error = NULL;
+ 
+   fp_dbg ("%s enter -->", G_STRFUNC);
+-  if (!g_usb_device_reset (fpi_device_get_usb_device (device), &error))
++  /* A USB reset makes the 10a5:9924 firmware restart and re-enumerate as a
++   * new device, which invalidates this handle, so skip it there. */
++  if (g_usb_device_get_pid (fpi_device_get_usb_device (device)) != 0x9924 &&
++      !g_usb_device_reset (fpi_device_get_usb_device (device), &error))
+     {
+       fpi_device_open_complete (FP_DEVICE (self), error);
+       return;
+-- 
+2.55.0
+
