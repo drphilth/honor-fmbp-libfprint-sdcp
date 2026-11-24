@@ -1,3 +1,19 @@
+honor-fmbp-libfprint-sdcp (1.94.10+sdcpv2-honor9) UNRELEASED; urgency=medium
+
+  * Support the FPC 10a5:9924 sensor that some FMB-P units ship instead of
+    the EgisTec ET171 (honor-magicbook-pro-14-ubuntu issue #3). This library
+    wins over the stock libfprint via ld.so.conf.d and was built with egismoc
+    only, so on FPC units fprintd had no usable driver at all.
+    - patches/0007: fpcmoc 10a5:9b24 id, upstream commit d8641635
+      (lichenggang), released in 1.94.100 but newer than the pinned base.
+    - patches/0008: fpcmoc 10a5:9924 id and no USB reset on open (the reset
+      restarts the sensor firmware, which re-enumerates and leaves a stale
+      handle); libfprint MR 666 by Lukas Thomann, cherry-picked unchanged.
+    - debian/rules, arch/PKGBUILD: build drivers egismoc,fpcmoc.
+  * README, README.Debian, Arch install notes: document both sensor variants.
+
+ -- Manuel Rüger <manuel@rueg.eu>  Tue, 24 Nov 2026 13:07:00 +0100
+
 honor-fmbp-libfprint-sdcp (1.94.10+sdcpv2-honor8) resolute; urgency=medium
 
   * patches/0004-sdcp-fix-intermittent-open-hang-on-short-host-privat.patch:

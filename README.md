@@ -1,12 +1,16 @@
 # honor-fmbp-libfprint-sdcp
 
-Fingerprint support for the **HONOR MagicBook Pro 14 2025 (FMB-P)** — the EgisTec ET171
-(`1c7a:05aa`) match-on-chip sensor, which speaks Microsoft's SDCP (the Windows Hello
-protocol). The power button *is* the sensor.
+Fingerprint support for the **HONOR MagicBook Pro 14 2025 (FMB-P)**. The power button *is*
+the sensor, and units ship one of two match-on-chip sensors (check `lsusb`):
+
+| USB ID | Sensor | Driver |
+|---|---|---|
+| `1c7a:05aa` | EgisTec ET171, speaks Microsoft's SDCP (the Windows Hello protocol) | `egismoc` + SDCP (patches 1–6) |
+| `10a5:9924` | FPC "L:2407" (`10a5:9b24` is a related FPC id) | `fpcmoc` (patches 7–8) |
 
 This is a **stopgap Debian packaging** of upstream libfprint's SDCP branch
 ([merge request 547](https://gitlab.freedesktop.org/libfprint/libfprint/-/merge_requests/547),
-`feature/sdcp-v2`, pinned commit) plus a six-patch series ([`patches/`](patches/)):
+`feature/sdcp-v2`, pinned commit) plus an eight-patch series ([`patches/`](patches/)):
 
 1. `egismoc`: EgisTec ET171 (`1c7a:05aa`) device support
 2. SDCP core: mark the identified print as device-stored (every match otherwise fails)
@@ -16,10 +20,22 @@ This is a **stopgap Debian packaging** of upstream libfprint's SDCP branch
 5. `egismoc`: finish the identify task on a finger-wait timeout (fixes a double close
    completion and `G_IS_TASK` critical)
 6. `egismoc`: bounds-check the SDCP ConnectResponse against the device-supplied cert length
+7. `fpcmoc`: FPC `10a5:9b24` id — upstream commit d8641635 (lichenggang), released in
+   1.94.100, backported because the pinned SDCP base predates it
+8. `fpcmoc`: FPC `10a5:9924` id and no USB reset on open (the reset restarts its firmware,
+   which re-enumerates and kills the handle) — upstream
+   [MR !666](https://gitlab.freedesktop.org/libfprint/libfprint/-/merge_requests/666)
+   (Lukas Thomann), still open
 
-The series is our own work, proposed for upstream inclusion; this package retires once
-the SDCP branch plus this device id land in a released libfprint. Hardware-verified on
-the FMB-P: enroll, verify, PAM lock-screen unlock, suspend/resume reconnect.
+Both drivers are built: the library replaces the stock one for fprintd (see below), so a
+driver missing here would be missing altogether.
+
+Patches 1–6 are our own work, proposed for upstream inclusion; 7–8 are upstream commits.
+This package retires once the SDCP branch plus these device ids land in a released
+libfprint. Hardware-verified on the FMB-P with the ET171: enroll, verify, PAM lock-screen
+unlock, suspend/resume reconnect. The FPC patch matches the one colorcube's Fedora
+package ships (tested there: enroll, verify, other fingers rejected); this build of it
+still needs an FPC owner's confirmation.
 
 ## Installing
 
@@ -44,9 +60,9 @@ relying on it** — most importantly: **booting Windows wipes your Linux enrollm
 verified experimentally; the fix is disabling the fingerprint device in Windows's Device
 Manager if you dual-boot). It also covers enrollment, PAM setup and retry tuning.
 
-Only the ET171 (`1c7a:05aa`) variant is covered. Some FMB-P units ship FPC sensors
-(`10a5:9924` / `10a5:9b24`, check `lsusb`) — those need a different driver and are not
-supported here.
+The Windows caveat above was verified with the ET171; whether Windows also prunes
+Linux templates on the FPC sensor is not known yet. A third FMB-P variant, FPC
+`10a5:a920`, is not covered (see [feraxtx/libfprint-10a5-a920](https://github.com/feraxtx/libfprint-10a5-a920)).
 
 ### Arch / CachyOS
 

@@ -1,0 +1,42 @@
+From e92078cc9e5cc6ef4d2aaf7d6e59a41968cc43d7 Mon Sep 17 00:00:00 2001
+From: lichenggang <lichenggang@uniontech.com>
+Date: Fri, 3 Apr 2026 16:25:44 +0800
+Subject: [PATCH 7/8] fpcmoc: Add support for 0x10A5:0x9B24
+
+Add the new FPC fingerprint device (0x10A5:0x9B24) to the driver and
+autosuspend hwdb.
+
+Signed-off-by: lichenggang <lichenggang@uniontech.com>
+(cherry picked from commit d8641635c5ec2feed795484868e12013de59a116)
+---
+ data/autosuspend.hwdb          | 1 +
+ libfprint/drivers/fpcmoc/fpc.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/data/autosuspend.hwdb b/data/autosuspend.hwdb
+index 31956d73..78cd1f62 100644
+--- a/data/autosuspend.hwdb
++++ b/data/autosuspend.hwdb
+@@ -201,6 +201,7 @@ usb:v10A5pD205*
+ usb:v10A5p9524*
+ usb:v10A5p9544*
+ usb:v10A5pC844*
++usb:v10A5p9B24*
+  ID_AUTOSUSPEND=1
+  ID_PERSIST=0
+ 
+diff --git a/libfprint/drivers/fpcmoc/fpc.c b/libfprint/drivers/fpcmoc/fpc.c
+index 6547a64e..466a8096 100644
+--- a/libfprint/drivers/fpcmoc/fpc.c
++++ b/libfprint/drivers/fpcmoc/fpc.c
+@@ -72,6 +72,7 @@ static const FpIdEntry id_table[] = {
+   { .vid = 0x10A5,  .pid = 0x9524,  },
+   { .vid = 0x10A5,  .pid = 0x9544,  },
+   { .vid = 0x10A5,  .pid = 0xC844,  },
++  { .vid = 0x10A5,  .pid = 0x9B24,  },
+   /* terminating entry */
+   { .vid = 0,  .pid = 0,  .driver_data = 0 },
+ };
+-- 
+2.55.0
+
