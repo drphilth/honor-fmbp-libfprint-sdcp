@@ -16,7 +16,7 @@ post_install() {
 >>> Confirm fprintd is using it:
 >>>   ldconfig -p | grep libfprint-2.so.2      # /usr/lib/honor-fmbp/... must be listed FIRST
 >>>
->>> Enroll (the ET171 wants ~15 touches):
+>>> Enroll (the ET171 wants ~15 touches; the FPC 10a5:9924 its own count):
 >>>   fprintd-enroll && fprintd-verify
 >>>
 >>> KDE lock-screen unlock then works with no PAM edits — Plasma ships the
@@ -32,5 +32,6 @@ post_upgrade() {
 post_remove() {
     _reload
     echo ">>> honor-fmbp-libfprint-sdcp removed — fprintd falls back to the stock libfprint,"
-    echo ">>> which cannot talk to the SDCP-gated ET171. Fingerprint will stop working."
+    echo ">>> which cannot talk to the SDCP-gated ET171 (nor, until MR 666 is released, the"
+    echo ">>> FPC 10a5:9924). Fingerprint will stop working."
 }

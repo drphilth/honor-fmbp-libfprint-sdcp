@@ -65,13 +65,16 @@ About this package
 ------------------
 Stopgap build of upstream libfprint's SDCP branch (MR 547, feature/sdcp-v2,
 pinned commit) plus our patch series adding ET171 (1c7a:05aa) device support
-and related fixes — the same series proposed upstream. The library lives in
+and related fixes — the same series proposed upstream — and two upstream fpcmoc
+patches for the FPC 10a5:9924 / 10a5:9b24 sensor (9924: libfprint MR 666). The library lives in
 /usr/lib/x86_64-linux-gnu/honor-fmbp/ and wins over the stock libfprint via
 ld.so.conf.d ordering; remove this package to fall back to stock. It will be
 retired once the SDCP branch plus this device id land in a released
 libfprint.
 
-Note: this package only supports the EgisTec ET171 (USB 1c7a:05aa) sensor
-variant. Some HONOR MagicBook Pro 14 units ship FPC sensors (10a5:9924 /
-10a5:9B24) instead — check `lsusb` — those need a different driver patch and
-are not covered here.
+Sensor variants: HONOR MagicBook Pro 14 units ship either the EgisTec ET171
+(USB 1c7a:05aa) or an FPC sensor (10a5:9924) — check `lsusb`. This library
+builds both drivers (egismoc, fpcmoc), so either works. The enrollment touch
+count above is the ET171's; the FPC asks for its own number. The Windows
+template-wipe behaviour was verified on the ET171 only. The FPC 10a5:a920
+variant is not covered.
